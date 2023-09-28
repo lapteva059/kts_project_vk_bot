@@ -4,6 +4,7 @@ from dataclasses import dataclass
 class Message:
     user_id: int
     text: str
+    peer_id: int
 
 
 @dataclass
@@ -15,7 +16,10 @@ class UpdateMessage:
 
 @dataclass
 class UpdateObject:
-    message: UpdateMessage
+    id: int
+    user_id: int
+    body: str
+    peer_id: int
 
 
 @dataclass

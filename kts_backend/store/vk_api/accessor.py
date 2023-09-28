@@ -6,7 +6,7 @@ from aiohttp import TCPConnector
 from aiohttp.client import ClientSession
 
 from kts_backend.base.base_accessor import BaseAccessor
-from kts_backend.store.vk_api.dataclasses import Message, Update, UpdateObject
+from kts_backend.store.vk_api.dataclasses import Message, UpdateObject, Update
 from kts_backend.store.vk_api.poller import Poller
 
 if typing.TYPE_CHECKING:
@@ -84,6 +84,7 @@ class VkApiAccessor(BaseAccessor):
             self.ts = data["ts"]
             raw_updates = data.get("updates", [])
             updates = []
+            print(raw_updates)
             for update in raw_updates:
                 updates.append(
                     Update(
@@ -92,6 +93,7 @@ class VkApiAccessor(BaseAccessor):
                             id=update["object"]["id"],
                             user_id=update["object"]["user_id"],
                             body=update["object"]["body"],
+                            peer_id=update["object"]["message"]["peer_id"]
                         ),
                     )
                 )
@@ -104,11 +106,12 @@ class VkApiAccessor(BaseAccessor):
                 API_PATH,
                 "messages.send",
                 params={
-                    "user_id": message.user_id,
+                   # "user_id": message.user_id,
                     "random_id": random.randint(1, 2**32),
                     "peer_id": "-" + str(self.app.config.bot.group_id),
                     "message": message.text,
                     "access_token": self.app.config.bot.token,
+                    "group_id": self.app.config.bot.group_id
                 },
             )
         ) as resp:
